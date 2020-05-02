@@ -1,3 +1,14 @@
+.babelrc
+.editorconfig
+.eslintrc
+.travis.yml
+.helper.js
+.indexhbs
+.karme.conf.js
+.pacckage-lock.json
+.pacckage.json
+.webpack.config.js
+.webpack.config.rules.js
 .idea/
 .vscode/
 .DS_Store
