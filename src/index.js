@@ -12,7 +12,7 @@
  */
 function createDivWithText(text) {
     let div = document.createElement('DIV');
-    div.innerHTML = text;
+    div.textContent = text;
 
     return div;
 }
@@ -106,8 +106,10 @@ function findError(where) {
    должно быть преобразовано в <div></div><p></p>
  */
 function deleteTextNodes(where) {
+    const TEXT_NODE = 3;
+
     for (let child of where.childNodes) {
-        if (child.nodeType === 3) {
+        if (child.nodeType === TEXT_NODE) {
           child.remove();
         }
     }
@@ -125,6 +127,20 @@ function deleteTextNodes(where) {
    должно быть преобразовано в <span><div><b></b></div><p></p></span>
  */
 function deleteTextNodesRecursive(where) {
+    const ELEMENT_NODE = 1;
+    const TEXT_NODE = 3;
+    let nodes = where.childNodes;
+
+    for (let i = 0; i < nodes.length; ++ i) {
+        let node = nodes[i];
+
+        if (node.nodeType === ELEMENT_NODE) {
+            deleteTextNodesRecursive(node);         
+        } else if (node.nodeType === TEXT_NODE) {
+            where.removeChild(node);
+            --i;
+        }
+    }
 }
 
 /*
@@ -148,6 +164,35 @@ function deleteTextNodesRecursive(where) {
    }
  */
 function collectDOMStat(root) {
+  let tags = {};
+  let classes = {};
+  let texts = 0;
+
+    for (let node of root.childNodes) {
+        if (node.nodeType === 3) {
+            texts++;
+        } else if (node.nodeType === 1) {
+
+            let tag = node.tagName;
+
+            if (!(tag in tags.keys())) {
+                tags[tag] = 1;
+            } else {
+                tags[tag] +=1;
+            }
+
+            let classSelectors = node.className.split(' ');
+
+            for(let selector of classSelectors) {
+                
+                if (!(selector in classes.keys())) {
+                    classes[selector] = 1;
+                } else {
+                    classes[selector] +=1;
+                }              
+            }
+        }
+    }
 }
 
 /*
