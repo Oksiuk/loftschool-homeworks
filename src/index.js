@@ -12,6 +12,7 @@
  */
 function createDivWithText(text) {
     let div = document.createElement('DIV');
+
     div.textContent = text;
 
     return div;
@@ -51,14 +52,12 @@ function prepend(what, where) {
 
 function findAllPSiblings(where) {
     let siblings = [];
-
     let elements = where.children;
 
     for (let i = 0; i < elements.length - 1; ++i) {
         let el = elements[i];
-        let elNext = elements[i].nextElementSibling;
 
-        if (elNext.tagName === 'P') {
+        if (el.nextElementSibling.tagName === 'P') {
             siblings.push(el);
         }
     }
@@ -106,11 +105,11 @@ function findError(where) {
    должно быть преобразовано в <div></div><p></p>
  */
 function deleteTextNodes(where) {
-    const TEXT_NODE = 3;
+    let nodes = where.childNodes;
 
-    for (let child of where.childNodes) {
-        if (child.nodeType === TEXT_NODE) {
-          child.remove();
+    for (let i = 0; i < nodes.length; ++i) {
+        if (nodes[i].nodeType === 3) {
+            nodes[i].remove();
         }
     }
 }
@@ -127,17 +126,15 @@ function deleteTextNodes(where) {
    должно быть преобразовано в <span><div><b></b></div><p></p></span>
  */
 function deleteTextNodesRecursive(where) {
-    const ELEMENT_NODE = 1;
-    const TEXT_NODE = 3;
     let nodes = where.childNodes;
 
     for (let i = 0; i < nodes.length; ++ i) {
         let node = nodes[i];
 
-        if (node.nodeType === ELEMENT_NODE) {
+        if (node.nodeType === node.ELEMENT_NODE) {
             deleteTextNodesRecursive(node);         
-        } else if (node.nodeType === TEXT_NODE) {
-            where.removeChild(node);
+        } else if (node.nodeType === node.TEXT_NODE) {
+            node.remove();
             --i;
         }
     }
@@ -163,38 +160,47 @@ function deleteTextNodesRecursive(where) {
      texts: 3
    }
  */
+
 function collectDOMStat(root) {
-  let tags = {};
-  let classes = {};
-  let texts = 0;
+    let statObj = {
+        tags: {},
+        classes: {},
+        texts: 0
+    }
+  
+    const getStat = (node) => {
 
-    for (let node of root.childNodes) {
-        if (node.nodeType === 3) {
-            texts++;
-        } else if (node.nodeType === 1) {
-
+        if (node.nodeType === 1) {
             let tag = node.tagName;
 
-            if (!(tag in tags.keys())) {
-                tags[tag] = 1;
+            if (statObj.tags.hasOwnProperty(tag)) {
+                statObj.tags[tag] += 1;
             } else {
-                tags[tag] +=1;
+                statObj.tags[tag] = 1;
             }
 
-            let classSelectors = node.className.split(' ');
-
-            for(let selector of classSelectors) {
-                
-                if (!(selector in classes.keys())) {
-                    classes[selector] = 1;
-                } else {
-                    classes[selector] +=1;
-                }              
+            if (node.classList.length > 0) {
+                for (let className of node.classList) {
+                    if (statObj.classes.hasOwnProperty(className)) {
+                        statObj.classes[className] += 1;
+                    } else {
+                        statObj.classes[className] = 1;
+                    }
+                }
             }
+
+            if (node.childNodes.length > 0) {
+                Array.from(node.childNodes).forEach(node => getStat(node));
+            }
+        } else if (node.nodeType === 3) {
+            statObj.texts += 1;
         }
     }
-}
 
+    getStat(root);
+
+    return statObj;
+}
 /*
  Задание 8 *:
 
@@ -228,6 +234,30 @@ function collectDOMStat(root) {
    }
  */
 function observeChildNodes(where, fn) {
+
+    let observer = new MutationObserver(mutations => {
+        mutations.forEach(mutation => {
+
+            let obj = { type: '', nodes: [] }
+          
+            mutation.addedNodes.forEach(node => {
+                obj.nodes.push(node);
+                obj.type = 'insert';
+            });
+
+            mutation.removedNodes.forEach(node => {
+                obj.nodes.push(node);
+                obj.type = 'remove';
+            });
+
+            fn(obj);
+        });
+    });
+
+    observer.observe(where, {
+        childList: true,
+        subtree: true
+    });
 }
 
 export {
