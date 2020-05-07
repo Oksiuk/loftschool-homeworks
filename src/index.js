@@ -161,46 +161,9 @@ function deleteTextNodesRecursive(where) {
    }
  */
 
-function collectDOMStat(root) {
-    let statObj = {
-        tags: {},
-        classes: {},
-        texts: 0
-    }
-  
-    const getStat = (node) => {
+// function collectDOMStat(root) {
 
-        if (node.nodeType === 1) {
-            let tag = node.tagName;
-
-            if (statObj.tags.hasOwnProperty(tag)) {
-                statObj.tags[tag] += 1;
-            } else {
-                statObj.tags[tag] = 1;
-            }
-
-            if (node.classList.length > 0) {
-                for (let className of node.classList) {
-                    if (statObj.classes.hasOwnProperty(className)) {
-                        statObj.classes[className] += 1;
-                    } else {
-                        statObj.classes[className] = 1;
-                    }
-                }
-            }
-
-            if (node.childNodes.length > 0) {
-                Array.from(node.childNodes).forEach(node => getStat(node));
-            }
-        } else if (node.nodeType === 3) {
-            statObj.texts += 1;
-        }
-    }
-
-    getStat(root);
-
-    return statObj;
-}
+// }
 /*
  Задание 8 *:
 
@@ -267,6 +230,6 @@ export {
     findError,
     deleteTextNodes,
     deleteTextNodesRecursive,
-    collectDOMStat,
+    // collectDOMStat,
     observeChildNodes
 };
