@@ -64,8 +64,8 @@ function delegate(target, fn) {
     target.onclick = function(event) {
         let target = event.target;
 
-        if(target.tagName != 'BUTTON') {
-          return;
+        if (target.tagName != 'BUTTON') {
+            return;
         }
 
         fn(target);
@@ -82,17 +82,18 @@ function delegate(target, fn) {
    once(document.querySelector('button'), () => console.log('обработчик выполнился!')) // добавит такой обработчик кликов для указанного элемента, который вызовется только один раз и затем удалится
  */
 function once(target, fn) {
+  
     target.addEventListener('click', handleclick); 
     let done = false;
 
     function handleclick() {
-        if(!done) {
+        if (!done) {
             fn();
             done = true;
         }
     }
 
-    if(done) {
+    if (done) {
         target.removeEventListener('click', handleclick);
     }
 } 
