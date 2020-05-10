@@ -8,3 +8,13 @@ out/
 dist/
 node_modules/
 coverage/
+.babelrc
+.editorconfig
+.eslintrc
+.travis.yml
+karma.conf.js
+package.json
+package-lock.json
+webpack.config.js
+webpack.config.rules.js
+webpack.config.test.js
