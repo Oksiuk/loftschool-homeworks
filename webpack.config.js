@@ -1,6 +1,7 @@
 const HtmlPlugin = require('html-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+//const ExtractTextPlugin = require("extract-text-webpack-plugin"); //<--
 const rules = require('./webpack.config.rules');
 const fs = require('fs');
 const path = require('path');
@@ -46,6 +47,7 @@ if (!html.length || !files['.hbs'].find(file => file.name === 'index')) {
 
 module.exports = {
     entry: entries,
+    //entry: 'src/cookie.js',
     output: {
         filename: '[name].[hash].js',
         path: path.resolve('dist')
@@ -61,14 +63,27 @@ module.exports = {
                     MiniCssExtractPlugin.loader,
                     'css-loader'
                 ]
-            }
+            },
+            // {
+            //     test: /\.css$/,
+            //     use: ExtractTextPlugin.extract({
+            //       fallback: "style-loader",
+            //       use: "css-loader"
+            //     })
+            // }
         ]
     },
+
     plugins: [
+        // new HtmlPlugin({
+        //     filename: 'index.html',
+        //     template: './src/index.hbs'
+        // }),
         new MiniCssExtractPlugin({
             filename: '[name].css',
         }),
         ...html,
+        //new ExtractTextPlugin("styles.css"),
         new CleanWebpackPlugin(['dist'])
     ]
 };
